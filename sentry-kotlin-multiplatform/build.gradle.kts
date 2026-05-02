@@ -68,6 +68,12 @@ kotlin {
     tvosX64()
     macosX64()
     macosArm64()
+    wasmJs {
+        browser()
+        binaries.library()
+        // tests stay disabled until Phase 3 wires SentryBridgeTest.wasmJs
+        compilations.remove(compilations.getByName("test"))
+    }
     addNoOpTargets()
 
     sourceSets {
@@ -207,7 +213,6 @@ kotlin {
             dependsOn(commonMain.get())
         }
         jsMain.get().dependsOn(commonStub)
-        wasmJsMain.get().dependsOn(commonStub)
         linuxMain.get().dependsOn(commonStub)
         mingwMain.get().dependsOn(commonStub)
     }
@@ -234,11 +239,6 @@ buildkonfig {
 
 private fun KotlinMultiplatformExtension.addNoOpTargets() {
     js(IR) {
-        browser()
-        binaries.library()
-        compilations.remove(compilations.getByName("test"))
-    }
-    wasmJs {
         browser()
         binaries.library()
         compilations.remove(compilations.getByName("test"))
