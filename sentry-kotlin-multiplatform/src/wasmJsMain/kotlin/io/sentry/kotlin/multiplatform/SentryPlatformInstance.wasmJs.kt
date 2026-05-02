@@ -1,9 +1,11 @@
-// TODO(#xxx): Replace with real @sentry/browser delegation in Phase 2.
-
 package io.sentry.kotlin.multiplatform
+
+import io.sentry.kotlin.multiplatform.external.Sentry as JsSentry
 
 internal actual class SentryPlatformInstance : SentryInstance {
     actual override fun init(configuration: PlatformOptionsConfiguration) {
-        // No-op
+        val options = SentryPlatformOptions()
+        configuration(options)
+        JsSentry.init(options.browserOptions)
     }
 }

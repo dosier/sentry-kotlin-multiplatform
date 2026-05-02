@@ -5,6 +5,10 @@ import kotlin.js.unsafeCast
 
 internal fun newJsObject(): JsAny = js("({})")
 
+/** Shallow-merge enumerable own properties from [source] onto [target] (same as `Object.assign`). */
+internal fun jsAssign(target: JsAny, source: JsAny): Unit =
+    js("(Object.assign(target, source), undefined)")
+
 internal fun jsArray(): JsAny = js("([])")
 
 /** Pushes a value into a JS array. */

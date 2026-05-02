@@ -1,14 +1,37 @@
-// TODO(#xxx): Replace with real @sentry/browser delegation in Phase 2.
-
 package io.sentry.kotlin.multiplatform
 
-public actual class SentryPlatformOptions
+import io.sentry.kotlin.multiplatform.extensions.toBrowserOptions
+import io.sentry.kotlin.multiplatform.external.BrowserOptions
+import io.sentry.kotlin.multiplatform.external.SentryWasm
+import io.sentry.kotlin.multiplatform.external.jsArray
+import io.sentry.kotlin.multiplatform.external.jsArrayPush
+import io.sentry.kotlin.multiplatform.external.jsAssign
+import io.sentry.kotlin.multiplatform.external.jsGetProperty
+import io.sentry.kotlin.multiplatform.external.jsSetProperty
+import io.sentry.kotlin.multiplatform.external.newJsObject
+import kotlin.js.JsAny
+import kotlin.js.unsafeCast
+
+public actual class SentryPlatformOptions {
+    internal val browserOptions: BrowserOptions =
+        newJsObject().unsafeCast<BrowserOptions>()
+}
 
 internal actual fun SentryPlatformOptions.prepareForInit() {
-    // No-op
+    // Append @sentry/wasm so Wasm stack frames symbolicate. If [integrations] was unset,
+    // this yields an array containing only wasmIntegration (see Phase 3+ to merge SDK defaults).
+    val target = browserOptions.unsafeCast<JsAny>()
+    val existing = jsGetProperty(target, "integrations")
+    val integrations = existing ?: jsArray()
+    jsArrayPush(integrations, SentryWasm.wasmIntegration())
+    jsSetProperty(target, "integrations", integrations)
+    // TODO(sdk-metadata): inject KMP SDK name + version into SDK info (browser private API).
 }
 
 internal actual fun SentryOptions.toPlatformOptionsConfiguration(): PlatformOptionsConfiguration =
-    {
-        // No-op
+    { platformOptions ->
+        jsAssign(
+            platformOptions.browserOptions.unsafeCast<JsAny>(),
+            toBrowserOptions().unsafeCast<JsAny>(),
+        )
     }
