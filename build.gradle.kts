@@ -32,17 +32,36 @@ subprojects {
         apply<DistributionPlugin>()
 
         val sep = File.separator
-        // The path where we want publishToMavenLocal to output the artifacts to
+        // Dist zips read from this directory; see prepareDistMavenLocal + distZip (not used for plain publishToMavenLocal).
         val buildPublishDir = "${project.layout.buildDirectory.get().asFile.path}${sep}sentry-local-publish$sep"
+
+        val mavenRepoLocalBackup = arrayOfNulls<String>(1)
+
+        tasks.register("prepareDistMavenLocal") {
+            group = "publishing"
+            description = "Sets maven.repo.local so distZip's publish lands under build/sentry-local-publish (dist only)."
+            notCompatibleWithConfigurationCache("mutates maven.repo.local System property")
+            doFirst {
+                mavenRepoLocalBackup[0] = System.getProperty("maven.repo.local")
+                System.setProperty("maven.repo.local", buildPublishDir)
+            }
+        }
 
         configure<DistributionContainer> {
             configureForMultiplatform(this@subprojects, buildPublishDir)
         }
 
         tasks.named("distZip").configure {
-            System.setProperty("maven.repo.local", buildPublishDir)
+            dependsOn("prepareDistMavenLocal")
             dependsOn("publishToMavenLocal")
             doLast {
+                val backup = mavenRepoLocalBackup[0]
+                if (backup != null) {
+                    System.setProperty("maven.repo.local", backup)
+                } else {
+                    System.clearProperty("maven.repo.local")
+                }
+                mavenRepoLocalBackup[0] = null
                 val distributionFilePath =
                     "${project.layout.buildDirectory.get().asFile.path}${sep}distributions${sep}${project.name}-${project.version}.zip"
                 val file = File(distributionFilePath)
@@ -52,6 +71,10 @@ subprojects {
         }
 
         afterEvaluate {
+            tasks.named("publishToMavenLocal").configure {
+                mustRunAfter("prepareDistMavenLocal")
+            }
+
             val platformDists = project.tasks.filter { task ->
                 task.name.matches(Regex("(.*)DistZip"))
             }.toTypedArray()
