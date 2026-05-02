@@ -55,9 +55,9 @@ object Config {
         val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1"
         val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
-        val ktorClientCore = "io.ktor:ktor-client-core:3.4.2"
-        val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:3.4.2"
-        val ktorClientDarwin = "io.ktor:ktor-client-darwin:3.4.2"
+        val ktorClientCore = "io.ktor:ktor-client-core:3.3.3"
+        val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:3.3.3"
+        val ktorClientDarwin = "io.ktor:ktor-client-darwin:3.3.3"
 
         val roboelectric = "org.robolectric:robolectric:4.15.1"
         val junitKtx = "androidx.test.ext:junit-ktx:1.2.1"

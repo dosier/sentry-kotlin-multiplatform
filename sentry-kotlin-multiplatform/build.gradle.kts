@@ -258,4 +258,18 @@ afterEvaluate {
     kotlin.targets.matching { it.name == "wasmJs" || it.name == "js" }.configureEach {
         compilations.findByName("test")?.let { compilations.remove(it) }
     }
+    // KGP recreates linux/mingw test tasks; stub targets only need `main` output.
+    tasks.matching {
+        val n = it.name
+        val isStubTarget =
+            n.contains("LinuxArm64", ignoreCase = true) ||
+                n.contains("LinuxX64", ignoreCase = true) ||
+                n.contains("MingwX64", ignoreCase = true)
+        isStubTarget &&
+            (n.startsWith("compileTestKotlin") ||
+                n.startsWith("linkDebugTest") ||
+                n.endsWith("TestKlibrary") ||
+                n.endsWith("TestBinaries") ||
+                n.endsWith("TestProcessResources") && n.contains("Test", ignoreCase = true))
+    }.configureEach { enabled = false }
 }

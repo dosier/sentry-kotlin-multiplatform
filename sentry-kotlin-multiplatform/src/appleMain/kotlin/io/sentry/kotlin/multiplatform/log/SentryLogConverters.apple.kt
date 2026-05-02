@@ -9,11 +9,8 @@ import cocoapods.Sentry.SentryLog as CocoaSentryLog
 import cocoapods.Sentry.SentryLogLevel as CocoaSentryLogLevel
 import io.sentry.kotlin.multiplatform.SentryAttributes as KmpSentryAttributes
 
-/**
- * Converts Cocoa SDK's [CocoaSentryLogLevel] to KMP [SentryLogLevel].
- */
 @Suppress("MagicNumber")
-internal fun CocoaSentryLogLevel.toKmpSentryLogLevel(): SentryLogLevel = when (this.convert<Int>()) {
+internal fun kmpLevelFromCocoaOrdinal(ordinal: Int): SentryLogLevel = when (ordinal) {
     0 -> SentryLogLevel.TRACE
     1 -> SentryLogLevel.DEBUG
     2 -> SentryLogLevel.INFO
@@ -22,6 +19,12 @@ internal fun CocoaSentryLogLevel.toKmpSentryLogLevel(): SentryLogLevel = when (t
     5 -> SentryLogLevel.FATAL
     else -> SentryLogLevel.DEBUG
 }
+
+/**
+ * Converts Cocoa SDK's [CocoaSentryLogLevel] to KMP [SentryLogLevel].
+ */
+internal fun CocoaSentryLogLevel.toKmpSentryLogLevel(): SentryLogLevel =
+    kmpLevelFromCocoaOrdinal(this.convert())
 
 /**
  * Converts KMP's [SentryLogLevel] to Cocoa SDK's [CocoaSentryLogLevel].
