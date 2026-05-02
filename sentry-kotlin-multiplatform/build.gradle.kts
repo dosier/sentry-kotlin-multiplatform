@@ -27,6 +27,7 @@ koverReport {
 }
 
 android {
+    namespace = "io.sentry.kotlin.multiplatform"
     compileSdk = Config.Android.compileSdkVersion
     defaultConfig {
         minSdk = Config.Android.minSdkVersion
