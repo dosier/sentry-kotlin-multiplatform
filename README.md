@@ -33,6 +33,11 @@ that can be used on Kotlin Multiplatform.
 |      macOS      | <ul><li>`macosArm64`</li><li>`macosX64`</ul>                                                                 |
 |     watchOS     | <ul><li>`watchosArm32`</li><li>`watchosArm64`</li><li>`watchosX64`</li><li>`watchosSimulatorArm64`</li></ul> |
 |      tvOS       | <ul><li>`tvosArm64`</li><li>`tvosX64`</li><li>`tvosSimulatorArm64`</li></ul>                                 |
+|   Wasm JS      | <ul><li>`wasmJs`</li></ul>                                                                                  |
+
+Wasm JS integrates **@sentry/browser** plus **@sentry/wasm** for stack-frame symbolication. Compared to mobile/desktop: **`isCrashedLastRun()`** always returns `false`; **file-path `Attachment`s** are unsupported; **`SentryOptions.logs` / structured `SentryLogger`** are not bridged yet (messages go via **`captureMessage`**); **`configureScope`** is only partially wired (direct **`setUser`**, **`addBreadcrumb`**, etc. work).
+
+For a runnable browser smoke test, see **[sentry-samples/kmp-app-wasmjs](sentry-samples/kmp-app-wasmjs/)**.
 
 ## Stubbed Platforms (No-Op Implementations)
 
@@ -42,7 +47,6 @@ They compile and satisfy the API surface, but **do nothing at runtime**.
 | Target Platform | Target preset                                     |
 |:---------------:|---------------------------------------------------|
 | JS              | <ul><li>`js`</li></ul>                            |
-| Wasm JS         | <ul><li>`wasmJs`</li></ul>                        |
 | Linux           | <ul><li>`linuxx64`</li><li>`linuxarm64`</li></ul> |
 | Windows         | <ul><li>`mingwx64`</li></ul>                      |
 

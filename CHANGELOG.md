@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- Add real `wasmJs` target backed by `@sentry/browser` and `@sentry/wasm` for stack-frame symbolication. Replaces the previous no-op stub on the Web platform. ([#PR-NUMBER](https://github.com/getsentry/sentry-kotlin-multiplatform/pull/PR-NUMBER))
+
+### Limitations
+
+- **`isCrashedLastRun()`** always returns `false` on wasmJs — browsers have no native equivalent.
+- **`Attachment`**: file-path attachments are not supported on wasmJs (in-memory payloads may land in a follow-up).
+- **`SentryOptions.logs` / `SentryLogger`**: not wired to `@sentry/browser` logging yet — falls back to `Sentry.captureMessage(message, level)`.
+- **`Sentry.configureScope { }`** is partially a no-op until a Scope adapter ships; **`Sentry.setUser`**, **`Sentry.addBreadcrumb`**, and related direct helpers work.
+
 ## 0.25.0
 
 ### Features
