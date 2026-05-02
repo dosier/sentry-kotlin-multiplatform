@@ -7,5 +7,6 @@ internal actual class SentryPlatformInstance : SentryInstance {
         val options = SentryPlatformOptions()
         configuration(options)
         JsSentry.init(options.browserOptions)
+        WasmSentrySession.active = true
     }
 }

@@ -8,6 +8,8 @@ class AttachmentTest {
 
     @Test
     fun `adding pathname to attachment returns correct values`() {
+        // wasmJs: Attachment constructors are stubs; @sentry/browser has no pathname attachments
+        if (!attachmentsSupported) return
         val pathname = "test"
         val attachment = Attachment(pathname)
 
@@ -19,6 +21,7 @@ class AttachmentTest {
 
     @Test
     fun `adding pathname and filename to attachment returns correct values`() {
+        if (!attachmentsSupported) return
         val pathname = "test"
         val filename = "test.log"
         val attachment = Attachment(pathname, filename)
@@ -31,6 +34,7 @@ class AttachmentTest {
 
     @Test
     fun `adding pathname and filename and contentType returns correct values`() {
+        if (!attachmentsSupported) return
         val pathname = "test"
         val filename = "test.log"
         val contentType = "application/json"
@@ -44,6 +48,7 @@ class AttachmentTest {
 
     @Test
     fun `adding bytes and filename returns correct values`() {
+        if (!attachmentsSupported) return
         val bytes = "test".encodeToByteArray()
         val filename = "test.log"
         val attachment = Attachment(bytes, filename)
@@ -56,6 +61,7 @@ class AttachmentTest {
 
     @Test
     fun `adding bytes and filename and contentType returns correct values`() {
+        if (!attachmentsSupported) return
         val bytes = "image bytes".encodeToByteArray()
         val filename = "image.png"
         val contentType = "image/png"

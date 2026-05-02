@@ -4,6 +4,7 @@ import io.sentry.kotlin.multiplatform.extensions.toBrowserBreadcrumb
 import io.sentry.kotlin.multiplatform.extensions.toBrowserFeedbackObject
 import io.sentry.kotlin.multiplatform.extensions.toBrowserUser
 import io.sentry.kotlin.multiplatform.extensions.toJsError
+import io.sentry.kotlin.multiplatform.external.BrowserScope
 import io.sentry.kotlin.multiplatform.external.Sentry as JsSentry
 import io.sentry.kotlin.multiplatform.log.JsSentryLoggerAdapter
 import io.sentry.kotlin.multiplatform.log.SentryLogger
@@ -11,6 +12,7 @@ import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import io.sentry.kotlin.multiplatform.protocol.SentryId
 import io.sentry.kotlin.multiplatform.protocol.User
 import io.sentry.kotlin.multiplatform.protocol.UserFeedback
+import kotlin.js.unsafeCast
 
 @Suppress("UnusedPrivateMember")
 internal actual class SentryBridge actual constructor(
@@ -41,9 +43,8 @@ internal actual class SentryBridge actual constructor(
 
     actual fun captureMessage(message: String, scopeCallback: ScopeCallback): SentryId {
         var id = SentryId.EMPTY_ID
-        JsSentry.withScope {
-            // TODO(scope-adapter): invoke [scopeCallback] with a [Scope] backed by the JS scope.
-            // Until then the callback is not run; the message is still captured.
+        JsSentry.withScope { jsScope ->
+            scopeCallback(WasmScopeProvider(jsScope.unsafeCast<BrowserScope>()))
             id = SentryId(JsSentry.captureMessage(message))
         }
         return id
@@ -54,8 +55,8 @@ internal actual class SentryBridge actual constructor(
 
     actual fun captureException(throwable: Throwable, scopeCallback: ScopeCallback): SentryId {
         var id = SentryId.EMPTY_ID
-        JsSentry.withScope {
-            // TODO(scope-adapter): invoke [scopeCallback] with a [Scope] backed by the JS scope.
+        JsSentry.withScope { jsScope ->
+            scopeCallback(WasmScopeProvider(jsScope.unsafeCast<BrowserScope>()))
             id = SentryId(JsSentry.captureException(throwable.toJsError()))
         }
         return id
@@ -66,8 +67,8 @@ internal actual class SentryBridge actual constructor(
     }
 
     actual fun configureScope(scopeCallback: ScopeCallback) {
-        // TODO(scope-adapter): expose JS [configureScope] through a KMP [Scope] adapter;
-        // until then prefer JsSentry.setUser / setTag / setExtra / setContext from app code.
+        val jsScope = JsSentry.getCurrentScope()
+        scopeCallback(WasmScopeProvider(jsScope.unsafeCast<BrowserScope>()))
     }
 
     actual fun addBreadcrumb(breadcrumb: Breadcrumb) {
@@ -82,9 +83,11 @@ internal actual class SentryBridge actual constructor(
 
     actual fun isCrashedLastRun(): Boolean = false
 
-    actual fun isEnabled(): Boolean = JsSentry.getClient() != null
+    actual fun isEnabled(): Boolean =
+        WasmSentrySession.active && JsSentry.getClient() != null
 
     actual fun close() {
+        WasmSentrySession.active = false
         JsSentry.close()
     }
 }

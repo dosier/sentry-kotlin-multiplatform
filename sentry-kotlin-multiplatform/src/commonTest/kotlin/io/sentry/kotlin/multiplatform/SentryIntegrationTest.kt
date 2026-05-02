@@ -312,6 +312,8 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger sends logs at different levels`() {
+        // wasmJs: SentryOptions.logs / KMP SentryLogger pipeline not bridged (structuredLogsSupported)
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture()
 
         Sentry.logger.trace("trace")
@@ -341,6 +343,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger with template and args formats message`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture()
 
         Sentry.logger.info("User %s logged in from %s", "alice", "192.168.1.1")
@@ -355,6 +358,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger DSL with simple message works`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture()
 
         Sentry.logger.info {
@@ -367,6 +371,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger DSL with template and args formats message`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture()
 
         Sentry.logger.info {
@@ -383,6 +388,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger DSL with attributes adds custom attributes`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture()
 
         Sentry.logger.error {
@@ -403,6 +409,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logs beforeSend returning null drops the log`() {
+        if (!structuredLogsSupported) return
         var beforeSendCallCount = 0
         initWithLogCapture(beforeSend = {
             beforeSendCallCount++
@@ -417,6 +424,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logs beforeSend can modify log body`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = mutableListOf<SentryLog>()
         initWithLogCapture(beforeSend = { log ->
             log.body = "modified: ${log.body}"
@@ -432,6 +440,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logger does not send logs when logs disabled`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = initWithLogCapture(enabled = false)
 
         Sentry.logger.info("this should not be captured")
@@ -441,6 +450,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logs beforeSend can add modify and remove attributes`() {
+        if (!structuredLogsSupported) return
         val capturedLogs = mutableListOf<SentryLog>()
         initWithLogCapture(beforeSend = { log ->
             log.body = "modified: ${log.body}"
@@ -472,6 +482,7 @@ class SentryIntegrationTest : BaseSentryTest() {
 
     @Test
     fun `logs beforeSend receives native SDK attributes`() {
+        if (!structuredLogsSupported) return
         initWithLogCapture(beforeSend = { log ->
             assertNotNull(log.attributes["sentry.sdk.name"])
             null

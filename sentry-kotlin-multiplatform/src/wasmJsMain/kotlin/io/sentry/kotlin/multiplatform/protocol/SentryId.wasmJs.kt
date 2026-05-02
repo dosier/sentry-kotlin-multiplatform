@@ -1,11 +1,18 @@
-// TODO(#xxx): Replace with real @sentry/browser delegation in Phase 2.
-
 package io.sentry.kotlin.multiplatform.protocol
 
-public actual data class SentryId actual constructor(private val sentryIdString: String) {
+private const val ZERO_32: String = "00000000000000000000000000000000"
+
+private fun normalizeSentryIdString(raw: String): String {
+    val compact = raw.replace("-", "").lowercase()
+    return if (compact.isEmpty()) ZERO_32 else compact
+}
+
+public actual class SentryId actual constructor(sentryIdString: String) {
+    private val normalized: String = normalizeSentryIdString(sentryIdString)
+
     public actual companion object {
-        public actual val EMPTY_ID: SentryId = SentryId("")
+        public actual val EMPTY_ID: SentryId = SentryId("00000000-0000-0000-0000-000000000000")
     }
 
-    actual override fun toString(): String = sentryIdString
+    actual override fun toString(): String = normalized
 }

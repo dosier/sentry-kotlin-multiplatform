@@ -60,6 +60,9 @@ xcuserdata
 *.ipa
 *.dSYM.zip
 
+# Kotlin/Wasm + Kotlin/JS webpack lock — generated artifacts
+kotlin-js-store/
+
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace

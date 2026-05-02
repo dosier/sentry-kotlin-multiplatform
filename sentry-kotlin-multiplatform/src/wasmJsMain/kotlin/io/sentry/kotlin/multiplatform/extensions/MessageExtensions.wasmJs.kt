@@ -5,6 +5,7 @@ import io.sentry.kotlin.multiplatform.external.jsArrayLength
 import io.sentry.kotlin.multiplatform.external.jsArrayPush
 import io.sentry.kotlin.multiplatform.external.jsGetProperty
 import io.sentry.kotlin.multiplatform.external.jsSetProperty
+import io.sentry.kotlin.multiplatform.external.jsTypeof
 import io.sentry.kotlin.multiplatform.external.jsValueToString
 import io.sentry.kotlin.multiplatform.external.jsArray
 import io.sentry.kotlin.multiplatform.external.kotlinStringAsJs
@@ -36,6 +37,12 @@ internal fun Message.toBrowserMessageObject(): JsAny {
 
 internal fun JsAny?.toKmpMessage(): Message {
     val root = this ?: return Message()
+
+    // Browser events may use a plain string for `message` instead of `{ formatted, message, params }`.
+    if (jsTypeof(root) == "string") {
+        val s = jsValueToString(root)
+        return Message(formatted = s.takeUnless { it.isEmpty() } ?: "")
+    }
 
     val formatted =
         jsGetProperty(root, "formatted")?.let {

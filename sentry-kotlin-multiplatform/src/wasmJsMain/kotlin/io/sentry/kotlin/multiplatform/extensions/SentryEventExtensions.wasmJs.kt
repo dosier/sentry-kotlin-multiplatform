@@ -8,8 +8,12 @@ import io.sentry.kotlin.multiplatform.external.jsArrayGet
 import io.sentry.kotlin.multiplatform.external.jsArrayLength
 import io.sentry.kotlin.multiplatform.external.jsArrayPush
 import io.sentry.kotlin.multiplatform.external.jsGetProperty
+import io.sentry.kotlin.multiplatform.external.jsIsArray
 import io.sentry.kotlin.multiplatform.external.jsOwnStringKeys
 import io.sentry.kotlin.multiplatform.external.jsSetProperty
+import io.sentry.kotlin.multiplatform.external.jsTypeof
+import io.sentry.kotlin.multiplatform.external.jsValueToBooleanStrict
+import io.sentry.kotlin.multiplatform.external.jsValueToDoubleStrict
 import io.sentry.kotlin.multiplatform.external.jsValueToString
 import io.sentry.kotlin.multiplatform.external.kotlinStringAsJs
 import io.sentry.kotlin.multiplatform.external.newJsObject
@@ -177,7 +181,69 @@ internal fun browserEventSnapshotToKmp(jsEvent: JsAny): SentryEvent {
         }
     }
 
+    jsGetProperty(jsEvent, "contexts")?.let {
+        kmp.contexts = browserContextsToKmpMap(it.unsafeCast())
+    }
+
     return kmp
+}
+
+private fun browserContextsToKmpMap(ctxRoot: JsAny): Map<String, Any> {
+    val keys = jsOwnStringKeys(ctxRoot)
+    val keyLen = jsArrayLength(keys)
+    return buildMap {
+        var i = 0
+        while (i < keyLen) {
+            val key =
+                jsArrayGet(keys, i)?.let { jsValueToString(it) }?.takeUnless { s -> s.isEmpty() }
+                    ?: run {
+                        i++
+                        continue
+                    }
+            i++
+            val raw = jsGetProperty(ctxRoot, key) ?: continue
+            put(key, jsContextValueToKotlin(raw) as Any)
+        }
+    }
+}
+
+private fun jsContextValueToKotlin(value: JsAny?): Any? {
+    if (value == null || jsTypeof(value) == "undefined") {
+        return null
+    }
+    return when (jsTypeof(value)) {
+        "string" -> jsValueToString(value)
+        "boolean" -> jsValueToBooleanStrict(value)
+        "number" -> normalizeJsNumber(jsValueToDoubleStrict(value))
+        "object" ->
+            if (jsIsArray(value)) {
+                jsArrayToContextList(value.unsafeCast())
+            } else {
+                browserContextsToKmpMap(value.unsafeCast())
+            }
+
+        else -> jsValueToString(value)
+    }
+}
+
+private fun jsArrayToContextList(arr: JsAny): List<Any?> {
+    val len = jsArrayLength(arr)
+    return buildList(len) {
+        repeat(len) { idx ->
+            add(jsContextValueToKotlin(jsArrayGet(arr, idx)))
+        }
+    }
+}
+
+private fun normalizeJsNumber(d: Double): Number {
+    if (!d.isFinite()) {
+        return d
+    }
+    val asLong = d.toLong()
+    if (asLong.toDouble() == d && asLong in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
+        return asLong.toInt()
+    }
+    return d
 }
 
 private fun Any.contextPayloadToJs(): JsAny? =

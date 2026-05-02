@@ -44,6 +44,18 @@ internal external interface BrowserBreadcrumb : JsAny {
     var timestamp: Double?
 }
 
+@Suppress("KotlinExternalInheritance")
+internal external interface BrowserScope : JsAny {
+    fun setTag(key: String, value: String)
+    fun setContext(key: String, context: JsAny?)
+    fun setExtra(key: String, value: JsAny?)
+    fun setLevel(level: String?)
+    fun setUser(user: BrowserUser?)
+    fun addBreadcrumb(breadcrumb: BrowserBreadcrumb)
+    fun clearBreadcrumbs()
+    fun clear()
+}
+
 @JsModule("@sentry/browser")
 internal external object Sentry {
     fun init(options: BrowserOptions): JsAny?
@@ -66,7 +78,7 @@ internal external object Sentry {
 
     fun addBreadcrumb(breadcrumb: BrowserBreadcrumb)
 
-    fun configureScope(callback: (JsAny) -> Unit)
+    fun getCurrentScope(): JsAny
 
     fun withScope(callback: (JsAny) -> Unit)
 

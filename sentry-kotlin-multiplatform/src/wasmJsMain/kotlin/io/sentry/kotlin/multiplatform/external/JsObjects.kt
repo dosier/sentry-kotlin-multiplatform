@@ -29,6 +29,8 @@ internal fun jsArrayGet(array: JsAny, index: Int): JsAny? = js("array[index]")
 
 internal fun jsTypeof(value: JsAny?): String = js("typeof value")
 
+internal fun jsIsArray(value: JsAny?): Boolean = js("Array.isArray(value)")
+
 internal fun jsValueToString(value: JsAny?): String = js("String(value)")
 
 @Suppress("UNUSED_PARAMETER")
