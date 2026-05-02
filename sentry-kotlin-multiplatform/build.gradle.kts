@@ -71,8 +71,6 @@ kotlin {
     wasmJs {
         browser()
         binaries.library()
-        // tests stay disabled until Phase 3 wires SentryBridgeTest.wasmJs
-        compilations.remove(compilations.getByName("test"))
     }
     addNoOpTargets()
 
@@ -87,7 +85,7 @@ kotlin {
                 optIn("kotlinx.cinterop.ExperimentalForeignApi")
                 optIn("kotlinx.cinterop.UnsafeNumber")
                 optIn("kotlin.experimental.ExperimentalNativeApi")
-                if (name == "wasmJsMain") {
+                if (name == "wasmJsMain" || name == "wasmJsTest") {
                     optIn("kotlin.js.ExperimentalWasmJsInterop")
                 }
             }
@@ -104,6 +102,12 @@ kotlin {
             implementation(Config.TestLibs.kotlinxSerializationJson)
             implementation(Config.TestLibs.kotlinCommon)
             implementation(Config.TestLibs.kotlinCommonAnnotation)
+        }
+
+        val wasmJsTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
         }
 
         androidMain.dependencies {
@@ -243,6 +247,9 @@ buildkonfig {
         buildConfigField(STRING, "SENTRY_JAVA_VERSION", Config.Libs.sentryJavaVersion)
         buildConfigField(STRING, "SENTRY_ANDROID_VERSION", Config.Libs.sentryJavaVersion)
         buildConfigField(STRING, "SENTRY_COCOA_VERSION", Config.Libs.sentryCocoaVersion)
+
+        buildConfigField(STRING, "SENTRY_BROWSER_PACKAGE_NAME", "npm:@sentry/browser")
+        buildConfigField(STRING, "SENTRY_BROWSER_VERSION", Config.Libs.sentryBrowserVersion)
     }
 }
 
@@ -264,7 +271,7 @@ private fun KotlinMultiplatformExtension.addNoOpTargets() {
 }
 
 afterEvaluate {
-    kotlin.targets.matching { it.name == "wasmJs" || it.name == "js" }.configureEach {
+    kotlin.targets.matching { it.name == "js" }.configureEach {
         compilations.findByName("test")?.let { compilations.remove(it) }
     }
     // KGP recreates linux/mingw test tasks; stub targets only need `main` output.

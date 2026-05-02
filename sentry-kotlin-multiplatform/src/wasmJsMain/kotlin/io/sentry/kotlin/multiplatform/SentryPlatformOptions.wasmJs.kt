@@ -25,7 +25,6 @@ internal actual fun SentryPlatformOptions.prepareForInit() {
     val integrations = existing ?: jsArray()
     jsArrayPush(integrations, SentryWasm.wasmIntegration())
     jsSetProperty(target, "integrations", integrations)
-    // TODO(sdk-metadata): inject KMP SDK name + version into SDK info (browser private API).
 }
 
 internal actual fun SentryOptions.toPlatformOptionsConfiguration(): PlatformOptionsConfiguration =

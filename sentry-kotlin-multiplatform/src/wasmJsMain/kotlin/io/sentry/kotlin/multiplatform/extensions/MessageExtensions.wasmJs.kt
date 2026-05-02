@@ -65,5 +65,12 @@ internal fun JsAny?.toKmpMessage(): Message {
             }
         }
 
-    return Message(message = message, params = params, formatted = formatted)
+    val formattedAdjusted =
+        if (message != null && formatted == message) {
+            null
+        } else {
+            formatted
+        }
+
+    return Message(message = message, params = params, formatted = formattedAdjusted)
 }
