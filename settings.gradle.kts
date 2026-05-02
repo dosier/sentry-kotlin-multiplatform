@@ -41,3 +41,8 @@ Simple KMP App with targets:
 include("sentry-samples:kmp-app-cocoapods:shared")
 include("sentry-samples:kmp-app-cocoapods:androidApp")
 include("sentry-samples:kmp-app-cocoapods:desktopApp")
+
+/*
+Minimal Kotlin/Wasm browser sample exercising the wasmJs Sentry bridge.
+*/
+include("sentry-samples:kmp-app-wasmjs:shared")
