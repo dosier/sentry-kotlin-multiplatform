@@ -40,6 +40,10 @@ object Config {
         val sentryCocoaVersion = "8.57.3"
         val sentryCocoa = "Sentry"
 
+        val sentryBrowserVersion = "10.51.0"
+        val sentryBrowser = "@sentry/browser"
+        val sentryWasm = "@sentry/wasm"
+
         object Samples {
             val koinVersion = "3.5.2-RC1"
             val koinCore = "io.insert-koin:koin-core:$koinVersion"

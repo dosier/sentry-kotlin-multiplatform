@@ -87,6 +87,9 @@ kotlin {
                 optIn("kotlinx.cinterop.ExperimentalForeignApi")
                 optIn("kotlinx.cinterop.UnsafeNumber")
                 optIn("kotlin.experimental.ExperimentalNativeApi")
+                if (name == "wasmJsMain") {
+                    optIn("kotlin.js.ExperimentalWasmJsInterop")
+                }
             }
         }
 
@@ -212,6 +215,12 @@ kotlin {
         val commonStub by creating {
             dependsOn(commonMain.get())
         }
+
+        wasmJsMain.dependencies {
+            implementation(npm(Config.Libs.sentryBrowser, Config.Libs.sentryBrowserVersion))
+            implementation(npm(Config.Libs.sentryWasm, Config.Libs.sentryBrowserVersion))
+        }
+
         jsMain.get().dependsOn(commonStub)
         linuxMain.get().dependsOn(commonStub)
         mingwMain.get().dependsOn(commonStub)
