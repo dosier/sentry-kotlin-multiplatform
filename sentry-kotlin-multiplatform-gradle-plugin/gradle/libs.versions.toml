@@ -1,6 +1,6 @@
 [versions]
 detekt = "1.22.0"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 pluginPublish = "1.2.1"
 buildConfig = "5.3.5"
 vanniktechPublish = "0.18.0"
