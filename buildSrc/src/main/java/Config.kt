@@ -1,7 +1,7 @@
 object Config {
     val agpVersion = "7.4.2"
-    val kotlinVersion = "2.1.21"
-    val composePluginVersion = "1.8.0"
+    val kotlinVersion = "2.2.20"
+    val composePluginVersion = "1.10.3"
     val gradleMavenPublishPluginVersion = "0.18.0"
 
     val multiplatform = "multiplatform"
@@ -51,14 +51,13 @@ object Config {
         val kotlinCommon = "org.jetbrains.kotlin:kotlin-test-common"
         val kotlinCommonAnnotation = "org.jetbrains.kotlin:kotlin-test-annotations-common"
         val kotlinJunit = "org.jetbrains.kotlin:kotlin-test-junit"
-        val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC"
-        val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0-RC"
-        val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+        val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
+        val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1"
+        val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
-        val ktorClientCore = "io.ktor:ktor-client-core:2.3.6"
-        val ktorClientSerialization = "io.ktor:ktor-client-serialization:2.3.6"
-        val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:2.3.6"
-        val ktorClientDarwin = "io.ktor:ktor-client-darwin:2.3.6"
+        val ktorClientCore = "io.ktor:ktor-client-core:3.4.2"
+        val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:3.4.2"
+        val ktorClientDarwin = "io.ktor:ktor-client-darwin:3.4.2"
 
         val roboelectric = "org.robolectric:robolectric:4.15.1"
         val junitKtx = "androidx.test.ext:junit-ktx:1.2.1"

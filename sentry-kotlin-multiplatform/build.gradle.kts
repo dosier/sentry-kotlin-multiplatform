@@ -3,6 +3,7 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -43,8 +44,8 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
 }
 
 kotlin {
@@ -91,7 +92,6 @@ kotlin {
             implementation(Config.TestLibs.kotlinCoroutinesCore)
             implementation(Config.TestLibs.kotlinCoroutinesTest)
             implementation(Config.TestLibs.ktorClientCore)
-            implementation(Config.TestLibs.ktorClientSerialization)
             implementation(Config.TestLibs.kotlinxSerializationJson)
             implementation(Config.TestLibs.kotlinCommon)
             implementation(Config.TestLibs.kotlinCommonAnnotation)
@@ -251,5 +251,11 @@ private fun KotlinMultiplatformExtension.addNoOpTargets() {
     }
     linuxX64 {
         compilations.remove(compilations.getByName("test"))
+    }
+}
+
+afterEvaluate {
+    kotlin.targets.matching { it.name == "wasmJs" || it.name == "js" }.configureEach {
+        compilations.findByName("test")?.let { compilations.remove(it) }
     }
 }
