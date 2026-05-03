@@ -3,7 +3,7 @@ package io.sentry.kotlin.multiplatform
 import io.sentry.Sentry
 import io.sentry.kotlin.multiplatform.extensions.toJvmBreadcrumb
 import io.sentry.kotlin.multiplatform.extensions.toJvmUser
-import io.sentry.kotlin.multiplatform.extensions.toJvmUserFeedback
+import io.sentry.kotlin.multiplatform.extensions.toJvmFeedback
 import io.sentry.kotlin.multiplatform.log.JvmSentryLoggerAdapter
 import io.sentry.kotlin.multiplatform.log.SentryLogger
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
@@ -56,7 +56,7 @@ internal actual class SentryBridge actual constructor(private val sentryInstance
     }
 
     actual fun captureUserFeedback(userFeedback: UserFeedback) {
-        Sentry.captureUserFeedback(userFeedback.toJvmUserFeedback())
+        Sentry.captureFeedback(userFeedback.toJvmFeedback())
     }
 
     actual fun configureScope(scopeCallback: ScopeCallback) {

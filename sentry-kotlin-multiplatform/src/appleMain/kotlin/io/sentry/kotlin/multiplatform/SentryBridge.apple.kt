@@ -5,7 +5,7 @@ import Internal.Sentry.kSentryLevelError
 import cocoapods.Sentry.SentrySDK
 import io.sentry.kotlin.multiplatform.extensions.toCocoaBreadcrumb
 import io.sentry.kotlin.multiplatform.extensions.toCocoaUser
-import io.sentry.kotlin.multiplatform.extensions.toCocoaUserFeedback
+import io.sentry.kotlin.multiplatform.extensions.toCocoaFeedback
 import io.sentry.kotlin.multiplatform.log.CocoaSentryLoggerAdapter
 import io.sentry.kotlin.multiplatform.log.SentryLogger
 import io.sentry.kotlin.multiplatform.nsexception.asSentryEvent
@@ -100,7 +100,7 @@ internal actual class SentryBridge actual constructor(private val sentryInstance
     }
 
     actual fun captureUserFeedback(userFeedback: UserFeedback) {
-        SentrySDK.captureUserFeedback(userFeedback.toCocoaUserFeedback())
+        SentrySDK.captureFeedback(userFeedback.toCocoaFeedback())
     }
 
     actual fun configureScope(scopeCallback: ScopeCallback) {
