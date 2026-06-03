@@ -2,6 +2,7 @@ package io.sentry.kotlin.multiplatform
 
 import Internal.Sentry.PrivateSentrySDKOnly
 import Internal.Sentry.kSentryLevelError
+import cocoapods.Sentry.SentryLogger as CocoaSentryLogger
 import cocoapods.Sentry.SentrySDK
 import io.sentry.kotlin.multiplatform.extensions.toCocoaBreadcrumb
 import io.sentry.kotlin.multiplatform.extensions.toCocoaUser
@@ -47,8 +48,11 @@ internal actual fun SentryPlatformOptions.prepareForInit() {
     PrivateSentrySDKOnly.setSdkName(BuildKonfig.SENTRY_KMP_COCOA_SDK_NAME, BuildKonfig.VERSION_NAME)
 }
 
+@Suppress("OVERLOAD_RESOLUTION_AMBIGUITY")
+private fun sentrySdkCocoaLogger(): CocoaSentryLogger = SentrySDK.logger
+
 internal actual class SentryBridge actual constructor(private val sentryInstance: SentryInstance) {
-    private val logger = CocoaSentryLoggerAdapter(SentrySDK::logger)
+    private val loggerAdapter = CocoaSentryLoggerAdapter(::sentrySdkCocoaLogger)
 
     actual fun init(context: Context, configuration: OptionsConfiguration) {
         init(configuration)
@@ -138,9 +142,7 @@ internal actual class SentryBridge actual constructor(private val sentryInstance
         }
     }
 
-    actual fun logger(): SentryLogger {
-        return logger
-    }
+    actual fun logger(): SentryLogger = loggerAdapter
 }
 
 @Suppress("unused")

@@ -1,6 +1,6 @@
 object Config {
-    val agpVersion = "8.2.2"
-    val kotlinVersion = "2.3.20"
+    val agpVersion = "8.7.3"
+    val kotlinVersion = "2.4.0"
     val composePluginVersion = "1.10.3"
     val gradleMavenPublishPluginVersion = "0.18.0"
 
